@@ -1,5 +1,10 @@
 import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { Platform } from 'react-native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
@@ -8,6 +13,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '../theme';
+import { useAppData } from '../context/AppDataContext';
+import { decodeDeckPayload } from '../utils/deckShare';
 import {
   CollectorStackParams,
   DashboardStackParams,
@@ -103,8 +110,29 @@ const TAB_ICON: Record<string, [keyof typeof Ionicons.glyphMap, keyof typeof Ion
 };
 
 export default function RootNavigator() {
+  const navRef = useNavigationContainerRef();
+  const { createDeckFrom } = useAppData();
+
+  // Click-to-import: opening a share link ( …/#d=<payload> ) on the web builds
+  // the deck and jumps straight to it, then clears the hash so a refresh won't
+  // re-import.
+  const handleShareLink = React.useCallback(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+    const m = window.location.hash.match(/[#?&]d=([^&]+)/);
+    if (!m) return;
+    const parsed = decodeDeckPayload(m[1]);
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    if (parsed && parsed.cards.length) {
+      const deck = createDeckFrom(parsed.name, parsed.cards);
+      (navRef as any).navigate('DeckTab', {
+        screen: 'DeckDetail',
+        params: { deckId: deck.id },
+      });
+    }
+  }, [createDeckFrom, navRef]);
+
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer theme={navTheme} ref={navRef} onReady={handleShareLink}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
