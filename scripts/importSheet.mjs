@@ -455,12 +455,22 @@ async function main() {
     };
   });
 
-  fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify({ sets: sets.map(({ _count, ...s }) => s), cards }, null, 0));
+  // Drop fully-unreleased sets (openable, but no artwork exists yet) and their
+  // cards entirely — e.g. hBP09 / hEB01 until the official site publishes them.
+  const unreleased = new Set(sets.filter((s) => s.comingSoon).map((s) => s.code));
+  if (unreleased.size) console.log(`Dropping unreleased sets: ${[...unreleased].join(', ')}`);
+  const finalSets = sets.filter((s) => !unreleased.has(s.code));
+  cards = cards.filter((c) => !unreleased.has(c.set));
 
-  console.log(`\nWrote ${cards.length} cards across ${sets.length} sets -> ${path.relative(process.cwd(), OUT)}\n`);
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+  fs.writeFileSync(
+    OUT,
+    JSON.stringify({ sets: finalSets.map(({ _count, ...s }) => s), cards }, null, 0),
+  );
+
+  console.log(`\nWrote ${cards.length} cards across ${finalSets.length} sets -> ${path.relative(process.cwd(), OUT)}\n`);
   console.log('SETS:');
-  for (const s of sets) {
+  for (const s of finalSets) {
     console.log(
       `  ${s.code.padEnd(6)} ${String(s._count).padStart(4)} cards  ${s.isPromo ? '[PROMO] ' : ''}${s.isCheer ? '[CHEER] ' : ''}${s.name}  (pack: ${setSample.get(s.code)?.pack || ''})`,
     );
