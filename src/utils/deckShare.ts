@@ -5,7 +5,7 @@ const DECKLOG_HOCG_GAME_ID = 9; // hololive OFFICIAL CARD GAME on Deck Log
 const DECKLOG_API = 'https://decklog.bushiroad.com/system/app/api/view/';
 // Base for our own share links. The payload after #d= is self-contained, so the
 // domain only matters once the web version is deployed.
-const SHARE_BASE = 'https://holotcg.app/#d=';
+const SHARE_BASE = 'https://hololive-ocg-collector.doquanglong280504.workers.dev/#d=';
 
 // ----- our own export / import (works offline, no server) -------------------
 
