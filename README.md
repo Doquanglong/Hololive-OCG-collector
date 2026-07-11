@@ -7,7 +7,7 @@ An unofficial, fan-made companion app for the **hololive OFFICIAL CARD GAME** �
 ## Features
 
 - **Database** — every set browsable in a responsive card grid, with search, colour/type filters, sorting, and a switchable grid size. Tap a card for full details and all of its alternate arts.
-- **Deck builder** — build to the game's rules (1 Oshi · 20 Cheer · 60 main deck), with live legality checks, per-card copy limits, a rules panel, and quantity editing. Rename / duplicate / delete decks.
+- **Deck builder** — build to the game's rules (1 Oshi · 20 Cheer · 50 main deck), with live legality checks, per-card copy limits, a rules panel, and quantity editing. Rename / duplicate / delete decks.
 - **Deck sharing & import** — export any deck as a share link, or import a deck straight from a [Deck Log](https://decklog.bushiroad.com) code (verifies it's a hololive deck first).
 - **Collector** — a personal album per set plus a **Master Collection** view, with completion %, search, and sorting.
 - **Dashboard** — collection stats and per-category progress at a glance.

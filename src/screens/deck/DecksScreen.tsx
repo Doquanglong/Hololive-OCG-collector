@@ -16,6 +16,7 @@ import { DeckStackParams } from '../../navigation/types';
 import { useAppData } from '../../context/AppDataContext';
 import { colors, radius, spacing } from '../../theme';
 import { fetchDecklogDeck, parseImportInput, decodeDeckPayload } from '../../utils/deckShare';
+import { confirmAction } from '../../utils/confirm';
 
 type Props = NativeStackScreenProps<DeckStackParams, 'Decks'>;
 
@@ -86,11 +87,10 @@ export default function DecksScreen({ navigation }: Props) {
     }
   };
 
-  const onLongPress = (id: string, deckName: string) => {
-    Alert.alert('Delete deck', `Delete "${deckName}"? This can't be undone.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteDeck(id) },
-    ]);
+  const onLongPress = async (id: string, deckName: string) => {
+    if (await confirmAction('Delete deck', `Delete "${deckName}"? This can't be undone.`, 'Delete', true)) {
+      deleteDeck(id);
+    }
   };
 
   return (

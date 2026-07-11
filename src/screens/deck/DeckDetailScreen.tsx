@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {
-  Alert,
   FlatList,
   Modal,
   Pressable,
@@ -33,6 +32,7 @@ import {
 } from '../../utils/cardType';
 import { DECK_RULES, analyzeDeck, canAddCard, maxCountFor } from '../../utils/deckRules';
 import { shareUrlForDeck } from '../../utils/deckShare';
+import { confirmAction } from '../../utils/confirm';
 
 type Props = NativeStackScreenProps<DeckStackParams, 'DeckDetail'>;
 type Mode = 'deck' | 'add';
@@ -357,19 +357,12 @@ export default function DeckDetailScreen({ route, navigation }: Props) {
               icon="trash-outline"
               label="Delete deck"
               danger
-              onPress={() => {
+              onPress={async () => {
                 setMenuOpen(false);
-                Alert.alert('Delete deck', `Delete "${deck.name}"?`, [
-                  { text: 'Cancel', style: 'cancel' },
-                  {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: () => {
-                      deleteDeck(deck.id);
-                      navigation.goBack();
-                    },
-                  },
-                ]);
+                if (await confirmAction('Delete deck', `Delete "${deck.name}"?`, 'Delete', true)) {
+                  deleteDeck(deck.id);
+                  navigation.goBack();
+                }
               }}
             />
           </View>

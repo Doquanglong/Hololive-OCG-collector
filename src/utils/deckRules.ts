@@ -2,8 +2,8 @@ import { Card, Deck } from '../types';
 import { CARD_BY_CODE } from '../data/cards';
 import { typeGroup } from './cardType';
 
-// A legal deck = 1 Oshi + 20 Cheer + 60 (holomem + support).
-export const DECK_RULES = { oshi: 1, cheer: 20, main: 60 };
+// A legal deck = 1 Oshi + 20 Cheer + 50 (holomem + support).
+export const DECK_RULES = { oshi: 1, cheer: 20, main: 50 };
 export const DEFAULT_MAX_COPIES = 4;
 
 /** Per-card copy limit. 0 (unlimited) is returned as Infinity. */
@@ -46,7 +46,7 @@ export function analyzeDeck(deck: Deck | undefined): DeckAnalysis {
 
   if (oshi !== DECK_RULES.oshi) issues.push(`Need exactly 1 Oshi (have ${oshi})`);
   if (cheer !== DECK_RULES.cheer) issues.push(`Need 20 Cheer (have ${cheer})`);
-  if (main !== DECK_RULES.main) issues.push(`Need 60 main-deck cards (have ${main})`);
+  if (main !== DECK_RULES.main) issues.push(`Need ${DECK_RULES.main} main-deck cards (have ${main})`);
 
   return { oshi, cheer, main, total: oshi + cheer + main, valid: issues.length === 0, issues };
 }
