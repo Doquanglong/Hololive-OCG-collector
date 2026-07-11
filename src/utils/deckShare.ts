@@ -1,11 +1,11 @@
+import { Platform } from 'react-native';
 import { Deck, DeckCard } from '../types';
 import { CARD_BY_CODE } from '../data/cards';
 
 const DECKLOG_HOCG_GAME_ID = 9; // hololive OFFICIAL CARD GAME on Deck Log
 const DECKLOG_API = 'https://decklog.bushiroad.com/system/app/api/view/';
-// Base for our own share links. The payload after #d= is self-contained, so the
-// domain only matters once the web version is deployed.
-const SHARE_BASE = 'https://hololive-ocg-collector.doquanglong280504.workers.dev/#d=';
+// Base for our own share links. The payload after #d= is self-contained.
+const SHARE_BASE = 'https://hololive-ocg-collector.longdodev.workers.dev/#d=';
 
 // ----- our own export / import (works offline, no server) -------------------
 
@@ -88,17 +88,22 @@ export interface DecklogResult {
 export async function fetchDecklogDeck(code: string): Promise<DecklogResult> {
   let res: Response;
   try {
-    // Deck Log needs a browser User-Agent and a Referer pointing at the deck's
-    // view page, otherwise it serves a WAF page / empty response. These headers
-    // are settable on native; on web this call is blocked by CORS (needs a proxy).
-    res = await fetch(DECKLOG_API + encodeURIComponent(code), {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
-        Referer: `https://decklog.bushiroad.com/view/${code}`,
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    });
+    // Deck Log needs a browser User-Agent + Referer, which native fetch can set
+    // but browsers cannot; browsers are also blocked by CORS. So on web we go
+    // through our own Cloudflare Worker proxy (/api/decklog), and on native we
+    // call Deck Log directly.
+    if (Platform.OS === 'web') {
+      res = await fetch(`/api/decklog?code=${encodeURIComponent(code)}`);
+    } else {
+      res = await fetch(DECKLOG_API + encodeURIComponent(code), {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+          Referer: `https://decklog.bushiroad.com/view/${code}`,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
+    }
   } catch {
     throw new Error('Import failed — check your internet connection.');
   }

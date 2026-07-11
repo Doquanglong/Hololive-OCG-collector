@@ -1,10 +1,10 @@
 {
-  // Serves the exported web build (dist/) as a static site on Cloudflare,
-  // with SPA fallback so deep links / refreshes return index.html.
+  // Serves the exported web build (dist/) and a small /api/decklog proxy.
   "name": "hololive-ocg-collector",
   "compatibility_date": "2025-01-01",
+  "main": "worker/index.js",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS"
   }
 }
