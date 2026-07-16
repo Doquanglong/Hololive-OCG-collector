@@ -1,5 +1,5 @@
 # Hololive OCG Collector
-
+https://hololive-ocg-collector.longdodev.workers.dev/
 An unofficial, fan-made companion app for the **hololive OFFICIAL CARD GAME** — browse every card, build decks, and track your collection. Runs on iOS, Android, and the web from a single codebase.
 
 > Not affiliated with or endorsed by COVER Corp. / hololive production or Bushiroad. All card data and images belong to their respective owners. This is a non-commercial fan project.
